@@ -11,27 +11,42 @@ function App() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [chartData, setChartData] = useState(null);
+  const [search, setSearch] = useState('');
 
 
   useEffect(() => {
     setLoading(true);
     axios
-      .get('http://localhost:5001/api/coins')
+      .get('https://crypto-tracker-backend-4xaw.onrender.com/api/coins')
       .then((response) => {
         setCoins(response.data);
         const bitcoin = response.data.find(coin => coin.id === 'bitcoin');
         if (bitcoin){
-          setChartData({
-            labels: ['1h','2h','6h','12h','24h'],
-            datasets: [{
-              label: 'Bitcoin Price in (USD)',
-              data: [bitcoin.current_price * 0.98, bitcoin.current_price * 0.99, bitcoin.current_price, bitcoin.current_price * 1.01, bitcoin.current_price * 1.02], // Mock prices
-              borderColor: 'rgba(75,192,192,1)',
-              tension: 0.1
-            }]
-          })
+          axios
+            .get(`https://api.coingecko.com/api/v3/coins/${bitcoin.id}/market_chart?vs_currency=usd&days=1`)
+            .then((chartResponse) => {
+              const prices = chartResponse.data.prices.map(price => price[1]);
+              const labels = chartResponse.data.prices.map(price => new Date(price[0]).toLocaleTimeString());
+              setChartData({
+                labels: labels,
+                datasets: [{
+                  label: 'Bitcoin Price (USD)',
+                  data: prices,
+                  borderColor: 'rgba(75,192,192,1)',
+                  tension: 0.1
+                }]
+              });
+              setLoading(false);
+            })
+            .catch((error) => {
+              console.error('Error fetching Bitcoin chart data:', error);
+              setError('Failed to load Bitcoin chart data');
+              setLoading(false);
+            });
+        }else{
+          setError('Bitcoin data not found');
+          setLoading(false);
         }
-        setLoading(false);
       })
       .catch((error) => {
         console.error('Error fetching coins:', error);
@@ -40,9 +55,21 @@ function App() {
       });
   }, []);
 
+  const filteredCoins = coins.filter(coin =>
+    coin.name.toLowerCase().includes(search.toLowerCase()) ||
+    coin.symbol.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
     <div className="App">
       <h1>Crypto Market Tracker</h1>
+      <input 
+        type="text"
+        placeholder="Search for a coin..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        style={{ marginBottom: '20px', padding: '10px', width: '300px' }}
+      />
       {loading && <p>Loading coins...</p>}
       {error && <p style={{ color: 'red' }}>{error}</p>}
       {!loading && !error && (
