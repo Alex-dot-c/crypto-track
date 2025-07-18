@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "/Users/checter/clojureCode"
+		},
+		{
+			"path": "/Users/checter/VS Code"
+		}
+	],
+	"settings": {
+		"git.ignoreLimitWarning": true
+	}
+}
