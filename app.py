@@ -38,8 +38,11 @@ def get_coins():
 @app.route("/api/coin/<id>/history")
 def get_coin_history(id):
     try:
+        days = request.args.get("days", "30")
         url = f"https://api.coingecko.com/api/v3/coins/{id}/market_chart"
-        response = requests.get(url, params={"vs_currency": "usd", "days": "30"})
+        response = requests.get(
+            url, params={"vs_currency": "usd", "days": days, "interval": "daily"}
+        )
         print(f"History API status code: {response.status_code}")
         print(f"History API Response: {response.text[:200]}")
         if response.status_code != 200:
@@ -52,7 +55,8 @@ def get_coin_history(id):
                 ),
                 500,
             )
-        return jsonify(response.json())
+        data = response.json()
+        return jsonify(data)
     except Exception as e:
         print(f"Error in /api/coin/{id}/history: {str(e)}")
         return jsonify({"error": str(e)}), 500
@@ -104,15 +108,9 @@ def grok_news_and_chart():
         ai_response = f"Error calling Grok: {str(e)}"
 
     # 2. Match prompt to a coin and fetch chart
-    coins_url = "https://api.coingecko.com/api/v3/coins/markets"
+    coins_url = f"https://api.coingecko.com/api/v3/coins/{coin_id}/market_chart"
     coins_resp = requests.get(
-        coins_url,
-        params={
-            "vs_currency": "usd",
-            "order": "market_cap_desc",
-            "per_page": 100,
-            "page": 1,
-        },
+        coins_url, params={"vs_currency": "usd", "days": "30", "interval": "daily"}
     )
     coin = None
     chart = None
