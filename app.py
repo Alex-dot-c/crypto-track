@@ -110,7 +110,7 @@ def grok_news_and_chart():
     # 2. Match prompt to a coin and fetch chart
     coins_url = f"https://api.coingecko.com/api/v3/coins/{coin_id}/market_chart"
     coins_resp = requests.get(
-        coins_url, params={"vs_currency": "usd", "days": "30", "interval": "daily"}
+        coins_url, params={"vs_currency": "usd", "days": "30", "interval": "daily"}. 
     )
     coin = None
     chart = None

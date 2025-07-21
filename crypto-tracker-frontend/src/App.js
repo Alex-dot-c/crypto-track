@@ -59,7 +59,7 @@ function App() {
           datasets: [
             {
               type: 'line',
-              label: `Price (USD)`,
+              label: `${coin.name} Price (USD) - ${getPeriodLabel(days)}`,
               data: prices,
               borderColor: 'rgba(75,192,192,1)',
               yAxisID: 'y',
@@ -67,7 +67,7 @@ function App() {
             },
             {
               type: 'bar',
-              label: `Volume`,
+              label: `${coin.name} Volume - ${getPeriodLabel(days)}`,
               data: volumes,
               backgroundColor: 'rgba(153,102,255,0.4)',
               yAxisID: 'y1',
@@ -141,6 +141,25 @@ function App() {
     }
     setAILoading(false);
   };
+
+  const getPeriodLabel = (period) => {
+    switch (period) {
+      case '1':
+        return 'Last 1 Day';
+      case '7':
+        return 'Last 7 Days';
+      case '30':
+        return 'Last 30 Days';
+      case '7': return 'Last 90 Days';
+      case '365':
+        return 'Last 1 Year';
+      case 'max':
+        return 'All Time';
+      default:
+        return 'Unknown Period';
+    }
+  };
+
 
   return (
     <div className="App">
