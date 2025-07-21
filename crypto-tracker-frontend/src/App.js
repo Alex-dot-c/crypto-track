@@ -59,7 +59,7 @@ function App() {
           datasets: [
             {
               type: 'line',
-              label: `${coin.name} Price (USD) - ${getPeriodLabel(days)}`,
+              label: `${selectedCoin.name} Price (USD) - ${getPeriodLabel(days)}`,
               data: prices,
               borderColor: 'rgba(75,192,192,1)',
               yAxisID: 'y',
@@ -67,7 +67,7 @@ function App() {
             },
             {
               type: 'bar',
-              label: `${coin.name} Volume - ${getPeriodLabel(days)}`,
+              label: `${selectedCoin.name} Volume - ${getPeriodLabel(days)}`,
               data: volumes,
               backgroundColor: 'rgba(153,102,255,0.4)',
               yAxisID: 'y1',
