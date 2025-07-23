@@ -50,6 +50,7 @@ def get_coins():
 
 
 @app.route("/api/coin/<id>/history")
+@cache.cached(timeout=300)  # Add caching here
 def get_coin_history(id):
     try:
         id_map = {"btc": "bitcoin", "eth": "ethereum", "xrp": "ripple"}

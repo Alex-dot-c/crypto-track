@@ -23,28 +23,7 @@ function App() {
   const [chartPeriod, setChartPeriod] = useState('30');
 
 
-
-
-
-  useEffect(() => {
-    if (activeTab === 'home') {
-      setLoading(true);
-      axios
-        .get(`${API_URL}/api/coins`)
-        .then((response) => {
-          setCoins(response.data);
-          setLoading(false);
-        })
-        .catch((error) => {
-          console.error('Error fetching coins:', error.response ?.data || error.message);
-          setError(error.response ?.data ?.error || 'Failed to load coin data');
-          setLoading(false);
-        });
-    }
-
-  }, [activeTab]);
-
-  const fetchCoinHistory = (coinId, days) => {
+  const fetchCoinHistory = useCallBack((coinId, days) => {
     setError(null);
     setCoinHistory(null);
     setLoading(true);
@@ -81,13 +60,38 @@ function App() {
         setError('Failed to load coin history');
         setLoading(false);
       });
-  };
+  }, []);
 
 
-  const handleSymbolClick = (coin) => {
-    setSelectedCoin(coin);
-    fetchCoinHistory(coin.id, chartPeriod);
-  };
+  useEffect(() => {
+    if (activeTab === 'home') {
+      setLoading(true);
+      axios
+        .get(`${API_URL}/api/coins`)
+        .then((response) => {
+          setCoins(response.data);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error('Error fetching coins:', error.response ?.data || error.message);
+          setError(error.response ?.data ?.error || 'Failed to load coin data');
+          setLoading(false);
+        });
+    }
+
+  }, [activeTab]);
+
+
+
+
+  const handleSymbolClick = useCallback((coin) => {
+    const timer = setTimeout(() => {
+      setSelectedCoin(coin);
+      fetchCoinHistory(coin.id, chartPeriod);
+      setActiveTab('history');
+    }, 500); // 500ms debounce
+    return () => clearTimeout(timer);
+  }, [chartPeriod, fetchCoinHistory]);
 
   const handlePeriodChange = (days) => {
     setChartPeriod(days);
@@ -150,7 +154,7 @@ function App() {
         return 'Last 7 Days';
       case '30':
         return 'Last 30 Days';
-      case '7': return 'Last 90 Days';
+      case '90': return 'Last 90 Days';
       case '365':
         return 'Last 1 Year';
       case 'max':
