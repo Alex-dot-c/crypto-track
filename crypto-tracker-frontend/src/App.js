@@ -36,8 +36,8 @@ function App() {
           setLoading(false);
         })
         .catch((error) => {
-          console.error('Error fetching coins:', error);
-          setError('Failed to load coin data');
+          console.error('Error fetching coins:', error.response ?.data || error.message);
+          setError(error.response ?.data ?.error || 'Failed to load coin data');
           setLoading(false);
         });
     }
