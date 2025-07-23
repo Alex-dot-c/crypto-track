@@ -59,7 +59,7 @@ def get_coin_history(id):
          params={
                 "vs_currency": "usd",
                 "days": days,
-                "interval": "daily"
+                "interval": "daily",
             }
         response = requests.get(
             url, params=params,
