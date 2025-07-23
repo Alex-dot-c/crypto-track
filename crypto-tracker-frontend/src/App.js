@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, BarElement } from 'chart.js';
@@ -23,7 +23,7 @@ function App() {
   const [chartPeriod, setChartPeriod] = useState('30');
 
 
-  const fetchCoinHistory = useCallBack((coinId, days) => {
+  const fetchCoinHistory = useCallback((coinId, days) => {
     setError(null);
     setCoinHistory(null);
     setLoading(true);
