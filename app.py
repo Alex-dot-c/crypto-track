@@ -56,7 +56,7 @@ def get_coin_history(id):
         coin_id = id_map.get(id.lower(), id)
         days = int(request.args.get("days", "30"))
         url = f"https://api.coingecko.com/api/v3/coins/{id}/market_chart"
-         params={
+        params={
                 "vs_currency": "usd",
                 "days": days,
                 "interval": "daily",
