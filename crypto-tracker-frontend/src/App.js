@@ -52,7 +52,7 @@ function App() {
       .get(`${API_URL}/api/coin/${coinId}/history?days=${days}`) // Updated to pass days as query param (requires backend change)
       .then((chartResponse) => {
         const prices = chartResponse.data.prices.map(price => price[1]);
-        const volumes = chartResponse.data.total_volumes?.map(volume => volume[1]) || []; // Assuming backend provides volumes
+        const volumes = chartResponse.data.total_volumes ?.map(volume => volume[1]) || []; // Assuming backend provides volumes
         const labels = chartResponse.data.prices.map(price => new Date(price[0]).toLocaleDateString());
         setCoinHistory({
           labels: labels,
@@ -114,7 +114,7 @@ function App() {
       if (res.data.coin && res.data.chart) {
         setSelectedCoin(res.data.coin);
         const prices = res.data.chart.prices.map(price => price[1]);
-        const volumes = res.data.chart.total_volumes?.map(volume => volume[1]) || []; // Add volume
+        const volumes = res.data.chart.total_volumes ?.map(volume => volume[1]) || []; // Add volume
         const labels = res.data.chart.prices.map(price => new Date(price[0]).toLocaleDateString());
         setCoinHistory({
           labels: labels,
@@ -306,8 +306,8 @@ function App() {
               <button onClick={() => setSelectedCoin(null)} style={{ marginTop: '20px' }}>Back to Coin List</button>
             </div>
           ) : (
-            <p>Please select a coin from the Home tab to view its history.</p>
-          )}
+              <p>Please select a coin from the Home tab to view its history.</p>
+            )}
         </div>
       )}
     </div>

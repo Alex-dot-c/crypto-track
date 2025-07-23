@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 import requests
 import os
@@ -38,7 +38,7 @@ def get_coins():
 @app.route("/api/coin/<id>/history")
 def get_coin_history(id):
     try:
-        days = request.args.get("days", "30")
+        days = int(request.args.get("days", "30"))
         url = f"https://api.coingecko.com/api/v3/coins/{id}/market_chart"
         response = requests.get(
             url, params={"vs_currency": "usd", "days": days, "interval": "daily"}
@@ -64,7 +64,6 @@ def get_coin_history(id):
 
 @app.route("/api/grok", methods=["POST"])
 def grok_news_and_chart():
-    from flask import request  # Add this import if not already present
 
     data = request.get_json()
     prompt = data.get("prompt", "")
@@ -73,7 +72,7 @@ def grok_news_and_chart():
 
     # 1. Call Grok API:
     GROK_API_URL = os.environ.get(
-        "GROK_API_URL", "https://api.grok.openai.com/v1/chat/completions"
+        "GROK_API_URL", "https://api.x.ai/v1/chat/completions"
     )  # Placeholder
     GROK_API_KEY = os.environ.get("GROK_API_KEY")
 
@@ -84,7 +83,7 @@ def grok_news_and_chart():
             "Content-Type": "application/json",
         }
         payload = {
-            "model": "grok-1",
+            "model": "grok-beta",
             "messages": [
                 {
                     "role": "user",
@@ -108,15 +107,13 @@ def grok_news_and_chart():
         ai_response = f"Error calling Grok: {str(e)}"
 
     # 2. Match prompt to a coin and fetch chart
-    coins_url = f"https://api.coingecko.com/api/v3/coins/{coin_id}/market_chart"
-    coins_resp = requests.get(
-        coins_url, params={"vs_currency": "usd", "days": "30", "interval": "daily"}
-    )
-    coin = None
+    coins_url = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=1"
+    coins_resp = requests.get(coins_url)
     chart = None
     if coins_resp.status_code == 200:
         coins = coins_resp.json()
         prompt_lower = prompt.strip().lower()
+        coin = None
         for c in coins:
             if c["symbol"].lower() == prompt_lower or c["name"].lower() == prompt_lower:
                 coin = c
