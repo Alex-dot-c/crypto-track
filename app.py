@@ -7,7 +7,7 @@ import time
 
 app = Flask(__name__)
 CORS(app)
-cache = Cache(config={'CACHE_TYPE': 'SimpleCache'})
+cache = Cache(config={'CACHE_TYPE': 'redis', 'CACHE_REDIS_URL': os.environ.get('CACHE_REDIS_URL', 'redis://localhost:6379/0')})
 cache.init_app(app)
 
 

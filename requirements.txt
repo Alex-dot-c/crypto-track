@@ -2,3 +2,5 @@ flask==3.1.1
 requests==2.32.3
 flask-cors==6.0.0
 flask-caching==2.2.0
+redis==5.0.1
+gunicorn==23.0.0
